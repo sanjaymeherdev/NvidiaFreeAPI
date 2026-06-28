@@ -268,7 +268,7 @@
               <h1>NVIDIA NIM Chat</h1>
               <nav class="navlinks" aria-label="Main navigation" style="margin-left:12px;">
                 <a href="/">Home</a>
-                <a href="/studio/index">Studio</a>
+                <a href="/studio">Studio</a>
                 <a href="/launcher.html">Launcher</a>
               </nav>
             </div>
@@ -338,12 +338,19 @@
           opt.textContent = m;
           modelSelect.appendChild(opt);
         });
-        // restore saved selection if present
+        // restore saved selection if present, otherwise default to "moonshot kimi" if available
         try {
           const saved = localStorage.getItem('selectedModel');
           if (saved) {
             modelSelect.value = saved;
             modelSelect.dispatchEvent(new Event('change'));
+          } else {
+            const preferred = Array.from(modelSelect.options).map(o=>o.value).find(v=>/moonshot[\s_\-]?kimi/i.test(v));
+            if (preferred) {
+              modelSelect.value = preferred;
+              try { localStorage.setItem('selectedModel', preferred); } catch(_){}
+              modelSelect.dispatchEvent(new Event('change'));
+            }
           }
         } catch(_) {}
       } catch (err) {

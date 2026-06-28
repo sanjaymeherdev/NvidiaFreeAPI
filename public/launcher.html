@@ -137,17 +137,16 @@
   </style>
 </head>
 <body>
-  <div class="topnav">
-    <div class="brand">NVIDIA NIM Chat</div>
-    <div class="navlinks">
-      <a href="/">Home</a>
-      <a href="/studio/index">Studio</a>
-      <a href="/launcher.html">Launcher</a>
-    </div>
-  </div>
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
-      <h1 class="title">Choose an output format</h1>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <h1 class="title">Choose an output format</h1>
+        <nav class="navlinks" aria-label="Main navigation" style="margin-left:12px;">
+          <a href="/">Home</a>
+          <a href="/studio">Studio</a>
+          <a href="/launcher.html">Launcher</a>
+        </nav>
+      </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <select id="modelSelect"></select>
       </div>
@@ -220,7 +219,17 @@
             const o = document.createElement('option'); o.value = m; o.textContent = m; modelSelect.appendChild(o);
           });
           const saved = localStorage.getItem('selectedModel');
-          if (saved) { modelSelect.value = saved; if (detectedEl) detectedEl.textContent = saved; }
+          if (saved) {
+            modelSelect.value = saved;
+            if (detectedEl) detectedEl.textContent = saved;
+          } else {
+            const preferred = data.models.find(v=>/moonshot[\s_\-]?kimi/i.test(v));
+            if (preferred) {
+              modelSelect.value = preferred;
+              try { localStorage.setItem('selectedModel', preferred); } catch(_){}
+              if (detectedEl) detectedEl.textContent = preferred;
+            }
+          }
         }
       } catch(e){}
     })();
