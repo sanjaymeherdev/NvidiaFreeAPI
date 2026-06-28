@@ -137,12 +137,19 @@
   </style>
 </head>
 <body>
+  <div class="topnav">
+    <div class="brand">NVIDIA NIM Chat</div>
+    <div class="navlinks">
+      <a href="/">Home</a>
+      <a href="/studio/index">Studio</a>
+      <a href="/launcher.html">Launcher</a>
+    </div>
+  </div>
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
       <h1 class="title">Choose an output format</h1>
       <div style="display:flex;align-items:center;gap:12px;">
-        <div class="model-tabs" id="modelTabs" title="Switch models"></div>
-        <select id="modelSelect" style="display:none"></select>
+        <select id="modelSelect"></select>
       </div>
     </div>
     <p class="subtitle">Pick the file type you want to generate and optionally attach a text-based source file. The file picker only accepts safe, text-style extensions.</p>
@@ -193,6 +200,30 @@
     const detectedEl = document.getElementById('detectedModel');
     const savedModel = localStorage.getItem('selectedModel');
     if (detectedEl) detectedEl.textContent = savedModel || 'none';
+
+    const modelSelect = document.getElementById('modelSelect');
+    if (modelSelect) {
+      modelSelect.addEventListener('change', ()=>{
+        try { localStorage.setItem('selectedModel', modelSelect.value); } catch(_){}
+        if (detectedEl) detectedEl.textContent = modelSelect.value || 'none';
+      });
+    }
+
+    // populate model dropdown in launcher (optional)
+    (async function(){
+      try {
+        const res = await fetch('/api/chat?list=models');
+        const data = await res.json();
+        if (modelSelect && data.models) {
+          modelSelect.innerHTML = '';
+          data.models.forEach(m=>{
+            const o = document.createElement('option'); o.value = m; o.textContent = m; modelSelect.appendChild(o);
+          });
+          const saved = localStorage.getItem('selectedModel');
+          if (saved) { modelSelect.value = saved; if (detectedEl) detectedEl.textContent = saved; }
+        }
+      } catch(e){}
+    })();
 
     const allowedExtensions = ['txt', 'md', 'json', 'js', 'jsx', 'ts', 'tsx', 'py', 'csv', 'html', 'css', 'xml', 'yaml', 'yml', 'sql', 'sh', 'bash'];
 

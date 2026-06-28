@@ -51,3 +51,39 @@
 @media (max-width: 720px) {
   .model-tabs { display: none; }
 }
+
+/* Top navigation bar used across pages */
+.topnav {
+  width: 100%;
+  background: rgba(18,22,28,0.96);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.topnav .brand { font-weight: 700; color: #eef2f9; font-size: 15px; }
+.topnav .navlinks { display:flex; gap:12px; align-items:center; }
+.topnav .navlinks a { color: #cfd9f2; text-decoration: none; padding:6px 10px; border-radius:8px; font-size:13px; }
+.topnav .navlinks a:hover { background: rgba(255,255,255,0.02); }
+
+/* Filepicker variant for input-row */
+.input-filepicker { display:flex; gap:8px; align-items:center; }
+.input-filepicker .btn { padding:8px 10px; border-radius:8px; }
+.input-filepicker .filename { max-width:140px; font-size:13px; color:#9fb0da; }
+
+/* Responsive adjustments for the app layout */
+@media (max-width: 900px) {
+  .app { flex-direction: column; height: auto; max-height: none; border-radius: 12px; }
+  .sidebar { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .main { width: 100%; }
+  .header { padding: 12px; }
+  .input-row { padding: 12px; gap:8px; }
+}
+
+@media (max-width: 420px) {
+  .thread-list { display:none; }
+  .thread-empty { display:none; }
+  textarea { font-size:14px; }
+}

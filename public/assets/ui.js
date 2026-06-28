@@ -117,9 +117,8 @@
     applyModelToLauncher,
   };
 
-  // Auto-run on DOM ready for common ids
+  // Auto-run on DOM ready for common ids (do not auto-build tabs; tabs are optional)
   document.addEventListener('DOMContentLoaded', ()=>{
-    if (document.getElementById('modelTabs')) buildTabsFromModels('modelSelect','modelTabs');
     wireFilepickers();
     // apply mapping if on launcher page
     if (document.getElementById('outputType')) applyModelToLauncher();

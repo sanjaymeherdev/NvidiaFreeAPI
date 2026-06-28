@@ -245,9 +245,17 @@
     .messages::-webkit-scrollbar { width: 6px; }
     .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
   </style>
+  <link rel="stylesheet" href="/assets/ui.css">
 </head>
 <body>
-  <link rel="stylesheet" href="/assets/ui.css">
+  <div class="topnav">
+    <div class="brand">NVIDIA NIM Chat</div>
+    <div class="navlinks">
+      <a href="/">Home</a>
+      <a href="/studio/index">Studio</a>
+      <a href="/launcher.html">Launcher</a>
+    </div>
+  </div>
   <div class="app">
     <div class="sidebar">
       <div class="sidebar-header">
@@ -262,18 +270,17 @@
           <div style="display:flex;align-items:center;gap:14px;width:100%;justify-content:space-between;">
             <h1>NVIDIA NIM Chat</h1>
             <div style="display:flex;align-items:center;gap:12px;">
-              <div class="model-tabs" id="modelTabs" aria-hidden="false" title="Switch models quickly"></div>
-              <select id="modelSelect" style="display:none"></select>
-              <div class="filepicker" title="Attach a text file">
-                <input id="appFile" type="file" accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.csv,.html,.css,.xml,.yaml,.yml,.sql,.sh,.bash" />
-                <button class="btn" type="button">Attach file</button>
-                <div class="filename">No file</div>
-              </div>
+              <select id="modelSelect"></select>
             </div>
           </div>
         </div>
         <div class="messages" id="messages"></div>
         <div class="input-row">
+          <div class="input-filepicker filepicker" title="Attach a text file">
+            <input id="appFile" type="file" accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.csv,.html,.css,.xml,.yaml,.yml,.sql,.sh,.bash" />
+            <button class="btn" type="button">Attach</button>
+            <div class="filename">No file</div>
+          </div>
           <textarea id="input" rows="1" placeholder="Type a message..."></textarea>
           <button id="sendBtn">Send</button>
         </div>
@@ -320,8 +327,14 @@
           opt.textContent = m;
           modelSelect.appendChild(opt);
         });
-            // rebuild tabs if ui script is loaded
-            if (window.NIM_UI) window.NIM_UI.buildModelTabs('modelSelect','modelTabs');
+        // restore saved selection if present
+        try {
+          const saved = localStorage.getItem('selectedModel');
+          if (saved) {
+            modelSelect.value = saved;
+            modelSelect.dispatchEvent(new Event('change'));
+          }
+        } catch(_) {}
       } catch (err) {
         addMessage('error', 'Failed to load model list: ' + err.message);
       }
@@ -521,6 +534,13 @@
       appFileInput.addEventListener('change', (e) => {
         attachedFile = appFileInput.files[0] || null;
         attachedFileSent = false;
+      });
+    }
+
+    // save model selection to localStorage when changed
+    if (modelSelect) {
+      modelSelect.addEventListener('change', ()=>{
+        try { localStorage.setItem('selectedModel', modelSelect.value); } catch(_){}
       });
     }
 
