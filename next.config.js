@@ -4,9 +4,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  async rewrites() {
-    return [{ source: '/', destination: '/app.html' }];
-  },
 };
 
 module.exports = nextConfig;
