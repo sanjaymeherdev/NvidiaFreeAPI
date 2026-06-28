@@ -112,19 +112,22 @@ export default async function handler(req) {
     return new Response(null, { status: 204, headers: corsHeaders() });
   }
 
-  const apiKey = process.env.NVIDIA_API_KEY;
-  if (!apiKey) {
-    return json({ error: 'NVIDIA_API_KEY environment variable is not set' }, 500);
-  }
-
   const url = new URL(req.url);
 
-  // GET /api/chat?list=models -> curated model catalog
+  // GET /api/chat?list=models -> curated model catalog (no API key needed,
+  // this is just a hardcoded list, so don't block it on NVIDIA_API_KEY)
   if (req.method === 'GET') {
     if (url.searchParams.get('list') === 'models') {
       return json(listModels());
     }
     return json({ error: 'Use GET ?list=models or POST a chat request' }, 400);
+  }
+
+  // Everything past this point (actual chat completions) talks to NVIDIA,
+  // so it does need the key.
+  const apiKey = process.env.NVIDIA_API_KEY;
+  if (!apiKey) {
+    return json({ error: 'NVIDIA_API_KEY environment variable is not set' }, 500);
   }
 
   if (req.method !== 'POST') {
