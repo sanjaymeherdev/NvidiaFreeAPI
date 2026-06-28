@@ -2,7 +2,7 @@ import {
   getRepoContents, 
   getFileContent, 
   updateFileWithPR 
-} from '../../lib/github.js';
+} from '../../../lib/github.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
