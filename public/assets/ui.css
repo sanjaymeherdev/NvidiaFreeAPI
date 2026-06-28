@@ -78,6 +78,19 @@
 .input-filepicker .btn { padding:8px 10px; border-radius:8px; }
 .input-filepicker .filename { max-width:140px; font-size:13px; color:#9fb0da; }
 
+/* Markdown / prose styles inside messages */
+.prose {
+  color: #e6eefc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.prose p { margin: 0 0 8px 0; }
+.prose pre { background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; font-size: 13px; }
+.prose code { background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; font-size: 13px; }
+.prose h1, .prose h2, .prose h3 { color: #fff; margin: 8px 0; }
+.prose a { color: #8ea2ff; text-decoration: underline; }
+.prose ul, .prose ol { padding-left: 18px; margin: 6px 0; }
+
 /* Responsive adjustments for the app layout */
 @media (max-width: 900px) {
   .app { flex-direction: column; height: auto; max-height: none; border-radius: 12px; }

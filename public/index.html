@@ -248,6 +248,8 @@
     .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
   </style>
   <link rel="stylesheet" href="/assets/ui.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 </head>
 <body>
   <div class="app">
@@ -311,7 +313,15 @@
     function addMessage(role, text) {
       const div = document.createElement('div');
       div.className = 'msg ' + role;
-      div.textContent = text;
+      // Render Markdown if marked is available and sanitize with DOMPurify
+      try {
+        const raw = (text == null) ? '' : String(text);
+        const html = (window.marked && typeof window.marked.parse === 'function') ? window.marked.parse(raw) : raw.replace(/</g,'&lt;');
+        const safe = (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') ? window.DOMPurify.sanitize(html) : html;
+        div.innerHTML = `<div class="prose">${safe}</div>`;
+      } catch (e) {
+        div.textContent = text;
+      }
       messagesEl.appendChild(div);
       messagesEl.scrollTop = messagesEl.scrollHeight;
       return div;
