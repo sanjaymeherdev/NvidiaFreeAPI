@@ -99,9 +99,9 @@
   gap: 0;
 }
 .sidebar {
-  flex: 1 1 50%;
-  min-width: 220px;
+  width: 240px;
+  min-width: 240px;
 }
 .main {
-  flex: 1 1 50%;
+  flex: 1 1 auto;
 }
