@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Output Studio Launcher</title>
+  <link rel="stylesheet" href="/assets/ui.css">
   <style>
     :root {
       color-scheme: dark;
@@ -137,8 +138,15 @@
 </head>
 <body>
   <div class="card">
-    <h1 class="title">Choose an output format</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
+      <h1 class="title">Choose an output format</h1>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="model-tabs" id="modelTabs" title="Switch models"></div>
+        <select id="modelSelect" style="display:none"></select>
+      </div>
+    </div>
     <p class="subtitle">Pick the file type you want to generate and optionally attach a text-based source file. The file picker only accepts safe, text-style extensions.</p>
+    <div style="margin-bottom:10px;color:var(--muted);font-size:13px;">Detected model: <span id="detectedModel">none</span></div>
 
     <div class="grid">
       <div class="field">
@@ -170,10 +178,21 @@
   </div>
 
   <script>
+    // load shared UI behavior
+    const script = document.createElement('script');
+    script.src = '/assets/ui.js';
+    script.defer = true;
+    document.head.appendChild(script);
+
     const outputTypeEl = document.getElementById('outputType');
     const sourceFileEl = document.getElementById('sourceFile');
     const openStudioBtn = document.getElementById('openStudioBtn');
     const messageEl = document.getElementById('message');
+
+    // show detected model if present
+    const detectedEl = document.getElementById('detectedModel');
+    const savedModel = localStorage.getItem('selectedModel');
+    if (detectedEl) detectedEl.textContent = savedModel || 'none';
 
     const allowedExtensions = ['txt', 'md', 'json', 'js', 'jsx', 'ts', 'tsx', 'py', 'csv', 'html', 'css', 'xml', 'yaml', 'yml', 'sql', 'sh', 'bash'];
 

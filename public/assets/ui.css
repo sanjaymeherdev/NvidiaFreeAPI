@@ -1,0 +1,53 @@
+/* Shared UI styles: model tabs and file picker */
+.model-tabs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.model-tab {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+  color: #cfd9f2;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.model-tab:hover { background: rgba(255,255,255,0.04); }
+.model-tab.active {
+  background: linear-gradient(90deg,#8b6bff,#6a8bff 100%);
+  color: white;
+  box-shadow: 0 6px 18px rgba(110,90,255,0.12);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.filepicker {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.filepicker input[type="file"] {
+  display: none;
+}
+.filepicker .btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #cfd9f2;
+  font-size: 13px;
+  cursor: pointer;
+}
+.filepicker .filename {
+  color: #9fb0da;
+  font-size: 13px;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filepicker .error { color: #ff8a8a; }
+
+@media (max-width: 720px) {
+  .model-tabs { display: none; }
+}

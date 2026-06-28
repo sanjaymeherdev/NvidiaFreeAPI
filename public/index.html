@@ -247,6 +247,7 @@
   </style>
 </head>
 <body>
+  <link rel="stylesheet" href="/assets/ui.css">
   <div class="app">
     <div class="sidebar">
       <div class="sidebar-header">
@@ -258,8 +259,18 @@
     <div class="main">
       <div class="chat-box">
         <div class="header">
-          <h1>NVIDIA NIM Chat</h1>
-          <select id="modelSelect"></select>
+          <div style="display:flex;align-items:center;gap:14px;width:100%;justify-content:space-between;">
+            <h1>NVIDIA NIM Chat</h1>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="model-tabs" id="modelTabs" aria-hidden="false" title="Switch models quickly"></div>
+              <select id="modelSelect" style="display:none"></select>
+              <div class="filepicker" title="Attach a text file">
+                <input id="appFile" type="file" accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.csv,.html,.css,.xml,.yaml,.yml,.sql,.sh,.bash" />
+                <button class="btn" type="button">Attach file</button>
+                <div class="filename">No file</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="messages" id="messages"></div>
         <div class="input-row">
@@ -271,6 +282,11 @@
   </div>
 
   <script>
+    // load shared UI behavior
+    const script = document.createElement('script');
+    script.src = '/assets/ui.js';
+    script.defer = true;
+    document.head.appendChild(script);
     const modelSelect = document.getElementById('modelSelect');
     const messagesEl = document.getElementById('messages');
     const inputEl = document.getElementById('input');
@@ -281,6 +297,8 @@
     let history = [];
     let currentThreadId = null;
     let threads = [];
+    let attachedFile = null;
+    let attachedFileSent = false;
 
     function addMessage(role, text) {
       const div = document.createElement('div');
@@ -302,6 +320,8 @@
           opt.textContent = m;
           modelSelect.appendChild(opt);
         });
+            // rebuild tabs if ui script is loaded
+            if (window.NIM_UI) window.NIM_UI.buildModelTabs('modelSelect','modelTabs');
       } catch (err) {
         addMessage('error', 'Failed to load model list: ' + err.message);
       }
@@ -377,6 +397,8 @@
       currentThreadId = null;
       history = [];
       messagesEl.innerHTML = '';
+      attachedFile = null;
+      attachedFileSent = false;
       renderThreadList();
     }
 
@@ -402,6 +424,18 @@
       sendBtn.disabled = true;
 
       const wasNewThread = !currentThreadId;
+
+      // If a file is attached and hasn't been sent for this thread, include it as a system message
+      if (attachedFile && !attachedFileSent) {
+        try {
+          const fileText = await attachedFile.text();
+          const sysContent = `Attached file: ${attachedFile.name}\n\n${fileText}`;
+          history.push({ role: 'system', content: sysContent });
+          attachedFileSent = true;
+        } catch (err) {
+          addMessage('error', 'Failed to read attached file: ' + err.message);
+        }
+      }
 
       history.push({ role: 'user', content: text });
       addMessage('user', text);
@@ -480,6 +514,15 @@
       }
     });
     newThreadBtn.addEventListener('click', startNewThread);
+
+    // wire file input
+    const appFileInput = document.getElementById('appFile');
+    if (appFileInput) {
+      appFileInput.addEventListener('change', (e) => {
+        attachedFile = appFileInput.files[0] || null;
+        attachedFileSent = false;
+      });
+    }
 
     loadModels();
     loadThreads();
