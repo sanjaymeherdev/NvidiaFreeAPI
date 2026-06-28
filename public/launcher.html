@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Output Studio Launcher</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0c10;
+      --panel: rgba(18, 22, 28, 0.92);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #eef2f9;
+      --muted: #8896b0;
+      --accent: #7c5cfc;
+      --accent-soft: rgba(124, 92, 252, 0.18);
+      --success: #80cbc4;
+      --danger: #ff8a8a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(circle at top, #161b24 0%, var(--bg) 55%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(760px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      padding: 28px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    select,
+    input[type="file"] {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    select option { background: #1a1f29; }
+
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+    }
+
+    .link-btn {
+      padding: 0;
+      background: transparent;
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .message {
+      min-height: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .message.error { color: var(--danger); }
+    .message.success { color: var(--success); }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .card { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="title">Choose an output format</h1>
+    <p class="subtitle">Pick the file type you want to generate and optionally attach a text-based source file. The file picker only accepts safe, text-style extensions.</p>
+
+    <div class="grid">
+      <div class="field">
+        <label for="outputType">Output type</label>
+        <select id="outputType">
+          <option value="excel">Excel</option>
+          <option value="doc">Word</option>
+          <option value="ppt">PowerPoint</option>
+          <option value="pdf">PDF</option>
+          <option value="csv">CSV</option>
+          <option value="github">GitHub Code</option>
+        </select>
+        <div class="hint">This opens the matching studio page.</div>
+      </div>
+
+      <div class="field">
+        <label for="sourceFile">Text source file</label>
+        <input id="sourceFile" type="file" accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.csv,.html,.css,.xml,.yaml,.yml,.sql,.sh,.bash" />
+        <div class="hint">Accepted formats: .txt, .md, .json, .js, .ts, .py, .csv, .html, .css, .xml, .yaml, .sql, .sh</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="openStudioBtn" type="button">Open studio</button>
+      <a class="link-btn" href="/">Back to main app</a>
+    </div>
+
+    <div id="message" class="message">Choose a format and open the matching page.</div>
+  </div>
+
+  <script>
+    const outputTypeEl = document.getElementById('outputType');
+    const sourceFileEl = document.getElementById('sourceFile');
+    const openStudioBtn = document.getElementById('openStudioBtn');
+    const messageEl = document.getElementById('message');
+
+    const allowedExtensions = ['txt', 'md', 'json', 'js', 'jsx', 'ts', 'tsx', 'py', 'csv', 'html', 'css', 'xml', 'yaml', 'yml', 'sql', 'sh', 'bash'];
+
+    function setMessage(text, kind = '') {
+      messageEl.textContent = text;
+      messageEl.className = 'message' + (kind ? ` ${kind}` : '');
+    }
+
+    function validateTextFile(file) {
+      if (!file) {
+        return { ok: true, message: 'No file selected. You can still open the studio.' };
+      }
+
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const mime = (file.type || '').toLowerCase();
+      const isTextLike = mime.startsWith('text/') || allowedExtensions.includes(ext);
+
+      if (!isTextLike || !allowedExtensions.includes(ext)) {
+        return {
+          ok: false,
+          message: `"${file.name}" is not allowed. Only text-based files are accepted.`
+        };
+      }
+
+      return {
+        ok: true,
+        message: `Selected "${file.name}" for upload.`
+      };
+    }
+
+    sourceFileEl.addEventListener('change', () => {
+      const result = validateTextFile(sourceFileEl.files[0]);
+      setMessage(result.message, result.ok ? 'success' : 'error');
+    });
+
+    openStudioBtn.addEventListener('click', () => {
+      const file = sourceFileEl.files[0];
+      const result = validateTextFile(file);
+
+      if (!result.ok) {
+        setMessage(result.message, 'error');
+        return;
+      }
+
+      setMessage(`Opening ${outputTypeEl.value} studio...`, 'success');
+      window.location.href = `/studio/${outputTypeEl.value}`;
+    });
+  </script>
+</body>
+</html>

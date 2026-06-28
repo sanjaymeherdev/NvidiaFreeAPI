@@ -35,31 +35,36 @@ export default function StudioMode() {
   }, [assistantMessages]);
 
   const ALLOWED_EXTENSIONS = ['txt', 'md', 'json', 'js', 'jsx', 'ts', 'tsx', 'py', 'csv', 'html', 'css', 'xml', 'yaml', 'yml', 'sql', 'sh', 'bash'];
-  
+
+  const validateAndReadFile = async (file) => {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const mime = (file.type || '').toLowerCase();
+    const isTextLike = mime.startsWith('text/') || ALLOWED_EXTENSIONS.includes(ext);
+
+    if (!isTextLike || !ALLOWED_EXTENSIONS.includes(ext)) {
+      throw new Error(`File "${file.name}" is not allowed. Only text-based files are accepted.`);
+    }
+
+    const content = await readFileAsText(file);
+    return { file, ext, content };
+  };
+
   const handleFileUpload = async (e) => {
     const uploadedFiles = Array.from(e.target.files);
-    
+
     for (const file of uploadedFiles) {
-      const ext = file.name.split('.').pop().toLowerCase();
-      
-      if (!ALLOWED_EXTENSIONS.includes(ext)) {
-        alert(`File "${file.name}" is not allowed. Only text-based files are accepted.`);
-        continue;
-      }
-      
       try {
-        const content = await readFileAsText(file);
+        const { ext, content } = await validateAndReadFile(file);
         setFiles(prev => [...prev, { name: file.name, size: file.size, type: ext }]);
         setFileContents(prev => ({ ...prev, [file.name]: content }));
-        
-        // Send file content to AI
+
         const fileMessage = `I've uploaded a file: ${file.name}\n\nContent:\n${content}`;
         await sendToAssistant(fileMessage);
       } catch (error) {
-        alert(`Error reading file ${file.name}: ${error.message}`);
+        alert(error.message);
       }
     }
-    
+
     e.target.value = '';
   };
   
@@ -193,6 +198,7 @@ export default function StudioMode() {
             onChange={handleFileUpload} 
             accept=".txt,.md,.json,.js,.jsx,.ts,.tsx,.py,.csv,.html,.css,.xml,.yaml,.yml,.sql,.sh,.bash"
             style={styles.fileInput}
+            title="Select a text-based source file"
           />
         </div>
       </header>

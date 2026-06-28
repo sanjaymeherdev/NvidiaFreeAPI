@@ -197,6 +197,21 @@
       flex-shrink: 0;
     }
 
+    .launcher-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px;
+      color: #cdbfff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .launcher-link:hover {
+      text-decoration: underline;
+    }
+
     textarea {
       flex: 1;
       resize: none;
@@ -236,6 +251,7 @@
     <div class="sidebar">
       <div class="sidebar-header">
         <button class="new-thread-btn" id="newThreadBtn">+ New chat</button>
+        <a class="launcher-link" href="/launcher.html">Open output launcher</a>
       </div>
       <div class="thread-list" id="threadList"></div>
     </div>
