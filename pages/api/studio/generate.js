@@ -1,16 +1,16 @@
-import { generateXLSX } from '../../lib/generators/xlsx.js';
-import { generatePDF } from '../../lib/generators/pdf.js';
-import { generatePPTX } from '../../lib/generators/pptx.js';
-import { generateDOCX } from '../../lib/generators/docx.js';
-import { generateCSV } from '../../lib/generators/csv.js';
+import { generateXLSX } from '../../../lib/generators/xlsx.js';
+import { generatePDF } from '../../../lib/generators/pdf.js';
+import { generatePPTX } from '../../../lib/generators/pptx.js';
+import { generateDOCX } from '../../../lib/generators/docx.js';
+import { generateCSV } from '../../../lib/generators/csv.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
+  
   const { mode, data } = req.body;
-
+  
   try {
     let buffer;
     let mimeType;
