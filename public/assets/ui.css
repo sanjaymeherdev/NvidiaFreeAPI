@@ -68,6 +68,11 @@
 .topnav .navlinks a { color: #cfd9f2; text-decoration: none; padding:6px 10px; border-radius:8px; font-size:13px; }
 .topnav .navlinks a:hover { background: rgba(255,255,255,0.02); }
 
+/* Header navigation (used in index.html header) */
+.navlinks { display:flex; gap:12px; align-items:center; }
+.navlinks a { color: #cfd9f2; text-decoration: none; padding:6px 10px; border-radius:8px; font-size:13px; }
+.navlinks a:hover { background: rgba(255,255,255,0.02); }
+
 /* Filepicker variant for input-row */
 .input-filepicker { display:flex; gap:8px; align-items:center; }
 .input-filepicker .btn { padding:8px 10px; border-radius:8px; }
@@ -86,4 +91,17 @@
   .thread-list { display:none; }
   .thread-empty { display:none; }
   textarea { font-size:14px; }
+}
+
+/* Split-screen layout for desktop: two equal columns */
+.app {
+  display: flex;
+  gap: 0;
+}
+.sidebar {
+  flex: 1 1 50%;
+  min-width: 220px;
+}
+.main {
+  flex: 1 1 50%;
 }

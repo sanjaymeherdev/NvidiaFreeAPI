@@ -12,31 +12,33 @@
       background: #0a0c10;
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+      margin: 0;
       color: #eef2f9;
+      height: 100vh;
     }
 
     .app {
       display: flex;
-      width: 100%;
-      max-width: 1000px;
-      height: 88vh;
-      max-height: 860px;
-      background: rgba(18, 22, 28, 0.9);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 20px;
+      width: 100vw;
+      max-width: none;
+      height: 100vh;
+      max-height: none;
+      background: rgba(18, 22, 28, 0.95);
+      border: 0;
+      border-radius: 0;
       overflow: hidden;
     }
 
     .sidebar {
-      width: 240px;
-      min-width: 240px;
+      flex: 1 1 50%;
+      min-width: 220px;
       border-right: 1px solid rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow: auto;
     }
 
     .sidebar-header {
@@ -248,14 +250,6 @@
   <link rel="stylesheet" href="/assets/ui.css">
 </head>
 <body>
-  <div class="topnav">
-    <div class="brand">NVIDIA NIM Chat</div>
-    <div class="navlinks">
-      <a href="/">Home</a>
-      <a href="/studio/index">Studio</a>
-      <a href="/launcher.html">Launcher</a>
-    </div>
-  </div>
   <div class="app">
     <div class="sidebar">
       <div class="sidebar-header">
@@ -268,7 +262,14 @@
       <div class="chat-box">
         <div class="header">
           <div style="display:flex;align-items:center;gap:14px;width:100%;justify-content:space-between;">
-            <h1>NVIDIA NIM Chat</h1>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <h1>NVIDIA NIM Chat</h1>
+              <nav class="navlinks" aria-label="Main navigation" style="margin-left:12px;">
+                <a href="/">Home</a>
+                <a href="/studio/index">Studio</a>
+                <a href="/launcher.html">Launcher</a>
+              </nav>
+            </div>
             <div style="display:flex;align-items:center;gap:12px;">
               <select id="modelSelect"></select>
             </div>
